@@ -90,14 +90,13 @@ omsagentDir="/etc/opt/microsoft/omsagent/conf/omsagent.d"
 confMofFiles=("change_tracking.conf" "change_tracking_inventory.mof" "service_change_tracking.conf" "service_change_tracking_inventory.mof" "LinuxFileChangeTracking.conf" "LinuxFileChangeTracking.mof")
 for file in "${confMofFiles[@]}"
 do
-    #echo "$omsagentDir/$file"
-    if (sudo test ! -f "$omsagentDir/$file")
-    then
-        echo "$file does not exist. Going back to sleep..."
+    fileToCheck="$omsagentDir/$file"
+    while (sudo test ! -e $fileToCheck)
+    do
+        echo "$fileToCheck does not exist. Going back to sleep..."
         sleep 600
-    else
+    done
         echo "$file exists.Proceeding..."
-    fi
 done
 
 SoftwareChanges 
