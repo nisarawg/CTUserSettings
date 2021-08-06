@@ -184,11 +184,14 @@ function CheckIfMPExists{
     Write-Host "ChangeTracking and Inventory MPs were downloaded! :)"
     Start-Sleep 180
     
-    Start-Job -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
-    Start-Job -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
-    Start-Job -ScriptBlock $SoftwareChanges
+#     Start-Job -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
+#     Start-Job -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
+#     Start-Job -ScriptBlock $SoftwareChanges
 
-    Get-Job | Wait-Job
+    Invoke-Command -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
+    Invoke-Command -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
+    Invoke-Command -ScriptBlock $SoftwareChanges
+
 }
 
 CheckIfMPExists
