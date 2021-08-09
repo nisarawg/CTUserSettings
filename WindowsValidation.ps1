@@ -218,5 +218,5 @@ function FileExists{
     # Get-Job | Wait-Job
 }
 
-Invoke-Command -ScriptBlock $CheckMPScript -ArgumentList @($outDirForFiles, $fileIntervalinMin, $servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
+Invoke-Command -ScriptBlock $CheckIfMPExists -ArgumentList @($outDirForFiles, $fileIntervalinMin, $servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
 
