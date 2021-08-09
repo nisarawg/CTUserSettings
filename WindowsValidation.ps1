@@ -18,7 +18,31 @@ Param(
 
     [Parameter(Mandatory = $false)]
     [array] 
-    $servicesToTest = @("bthserv","lfsvc")
+    $servicesToTest = @("bthserv")
+)
+
+$CheckIfMPExists = {
+    Param( 
+
+    [Parameter(Mandatory = $false)]
+    [string] 
+    $outDirForFiles = "D:\testfolder",
+
+    [Parameter(Mandatory = $false)]
+    [int]
+    $fileIntervalinMin = 45,
+
+    [Parameter(Mandatory = $false)]
+    [int] 
+    $servicesIntervalinMin = 10,
+
+    [Parameter(Mandatory = $false)]
+    [int] 
+    $numberLoopsForServices = 5,
+
+    [Parameter(Mandatory = $false)]
+    [array] 
+    $servicesToTest = @("bthserv")
 )
 
 $FileChanges = { 
@@ -171,7 +195,7 @@ function FileExists{
     return (Test-Path $fileName -PathType Leaf)
 }
 
-function CheckIfMPExists{
+
     
     $MPFolder = "$env:HOMEDRIVE\Program Files\Microsoft Monitoring Agent\Agent\Health Service State\Management Packs"
     $ChangeTrackingDirectAgentMP = "$MPFolder\Microsoft.IntelligencePacks.ChangeTrackingDirectAgent*"
@@ -184,15 +208,15 @@ function CheckIfMPExists{
     Write-Host "ChangeTracking and Inventory MPs were downloaded! :)"
     Start-Sleep 180
     
-#     Start-Job -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
-#     Start-Job -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
-#     Start-Job -ScriptBlock $SoftwareChanges
-
+    # Start-Job -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
+    # Start-Job -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
+    # Start-Job -ScriptBlock $SoftwareChanges
     Invoke-Command -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
     Invoke-Command -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
     Invoke-Command -ScriptBlock $SoftwareChanges
 
+    # Get-Job | Wait-Job
 }
 
-CheckIfMPExists
+Invoke-Command -ScriptBlock $CheckMPScript -ArgumentList @($outDirForFiles, $fileIntervalinMin, $servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
 
