@@ -195,7 +195,7 @@ function FileExists{
     return (Test-Path $fileName -PathType Leaf)
 }
 
-
+    Enable-PSRemoting –Force
     
     $MPFolder = "$env:HOMEDRIVE\Program Files\Microsoft Monitoring Agent\Agent\Health Service State\Management Packs"
     $ChangeTrackingDirectAgentMP = "$MPFolder\Microsoft.IntelligencePacks.ChangeTrackingDirectAgent*"
@@ -214,6 +214,7 @@ function FileExists{
     Invoke-Command -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
     Invoke-Command -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
     Invoke-Command -ScriptBlock $SoftwareChanges
+    
 
     # Get-Job | Wait-Job
 }
