@@ -41,7 +41,7 @@ FileChanges() {
         echo "File modified at $(date +"%T")">>"$currentdir/$file"
     done
     sleep $((fileTimeInterval*60))
-    files+='f4-linux.txt'
+    files+=('f4-linux.txt')
     echo "File created at $(date +"%T")">>"$currentdir/f4-linux.txt"
     
 
@@ -99,6 +99,6 @@ do
         echo "$file exists.Proceeding..."
 done
 
-SoftwareChanges &
-DaemonChanges $daemonTimeInterval &
 FileChanges $fileTimeInterval $outDirForFiles &
+DaemonChanges $daemonTimeInterval &
+SoftwareChanges &
