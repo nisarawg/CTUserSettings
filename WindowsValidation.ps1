@@ -115,7 +115,7 @@ $FileChanges = {
     }
     Start-Sleep -Seconds ($fileIntervalinMin*60) 
 
-    # Adding the files f4, modifying f3 and removing f1 in second cycle.
+    # Adding the files f4, modifying rest.
     Foreach($file in $filesToAdd){
         Modify-File $file
     }
@@ -129,7 +129,7 @@ $FileChanges = {
     }
     $filesToAdd = $filesToAdd -ne "file1.txt"
     Rem-File "file1.txt"
-    Start-Sleep -Seconds ($fileIintervalinMin*60)
+    Start-Sleep -Seconds ($fileIntervalinMin*60)
 
     #removing all files
     Foreach($file in $filesToAdd){
@@ -149,7 +149,7 @@ $ServiceChanges = {
 
         [Parameter(Mandatory = $false)]
         [array] 
-        $servicesToTest = @("bthserv","lfsvc")
+        $servicesToTest = @("bthserv")
     )
 
     
@@ -195,29 +195,40 @@ function FileExists{
     return (Test-Path $fileName -PathType Leaf)
 }
 
+function FolderExists{
+    Param(
+        [Parameter(Mandatory = $true)]
+        [string] $folderName
+    )
+
+    return (Test-Path $folderName)
+}
+
     #Enable-PSRemoting –Force
     
-    $MPFolder = "$env:HOMEDRIVE\Program Files\Microsoft Monitoring Agent\Agent\Health Service State\Management Packs"
+    $HealthServiceStateFolder = "$env:HOMEDRIVE\Program Files\Microsoft Monitoring Agent\Agent\Health Service State"
+    $MPFolder = "$HealthServiceStateFolder\Management Packs"
     $ChangeTrackingDirectAgentMP = "$MPFolder\Microsoft.IntelligencePacks.ChangeTrackingDirectAgent*"
     $InventoryChangeTrackingMP = "$MPFolder\Microsoft.IntelligencePacks.InventoryChangeTracking*"
+    $CTFolder = "$HealthServiceStateFolder\CT_*"
+    $FCTFolder = "$HealthServiceStateFolder\FCT_*"
+    $ICTFolder = "$HealthServiceStateFolder\ICT*"
 
     while(!(FileExists($ChangeTrackingDirectAgentMP)) -and !(FileExists($InventoryChangeTrackingMP))){
         Write-Host "ChangeTracking and Inventory MPs have not been downloaded yet. Going back to sleep..."
-        Start-Sleep 900
+        Start-Sleep -Seconds 1200
     }
     Write-Host "ChangeTracking and Inventory MPs were downloaded! :)"
-    Start-Sleep 180
-    
-    # Start-Job -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
-    # Start-Job -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
-    # Start-Job -ScriptBlock $SoftwareChanges
+    while(!(FolderExists($CTFolder)) -and !(FolderExists($FCTFolder)) -and !(FolderExists($ICTFolder))){
+        Write-Host "CT/FCT/ICT folders have not been created yet. Going back to sleep..."
+        Start-Sleep -Seconds 900
+    }
+    Write-Host "CT, FCT and ICT folders were created! :)"
+    Start-Sleep -Seconds 900
+
     Invoke-Command -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
     Invoke-Command -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
     Invoke-Command -ScriptBlock $SoftwareChanges
-    
-
-    # Get-Job | Wait-Job
 }
 
 Invoke-Command -ScriptBlock $CheckIfMPExists -ArgumentList @($outDirForFiles, $fileIntervalinMin, $servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
-
