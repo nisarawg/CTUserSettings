@@ -224,7 +224,7 @@ function FolderExists{
         Start-Sleep -Seconds 900
     }
     Write-Host "CT, FCT and ICT folders were created! :)"
-    Start-Sleep -Seconds 900
+    Start-Sleep -Seconds 1800
 
     Invoke-Command -ScriptBlock $FileChanges -ArgumentList @($outDirForFiles, $fileIntervalinMin)
     Invoke-Command -ScriptBlock $ServiceChanges -ArgumentList @($servicesIntervalinMin, $numberLoopsForServices, $servicesToTest)
