@@ -99,6 +99,6 @@ do
         echo "$file exists.Proceeding..."
 done
 
-FileChanges $fileTimeInterval $outDirForFiles &
-DaemonChanges $daemonTimeInterval &
 SoftwareChanges &
+DaemonChanges $daemonTimeInterval &
+FileChanges $fileTimeInterval $outDirForFiles &
