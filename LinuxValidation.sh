@@ -101,4 +101,4 @@ done
 
 FileChanges $fileTimeInterval $outDirForFiles &
 DaemonChanges $daemonTimeInterval &
-SoftwareChanges &
+SoftwareChanges
